@@ -1,0 +1,13 @@
+# application.yml
+src/main/resources/application.yml
+
+# IntelliJ
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+
+# 환경변수
+*.env
