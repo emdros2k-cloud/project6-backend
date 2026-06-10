@@ -17,8 +17,3 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /v3/api-docs
