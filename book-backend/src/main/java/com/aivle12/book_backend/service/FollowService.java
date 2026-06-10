@@ -17,32 +17,32 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     // 팔로우
-    public FollowResponseDto follow(Long followingId) {
+    public FollowResponseDto follow(Long followingId, Long userId) {
         Follow follow = new Follow();
-        follow.setFollowerId(1L); // 임시 userId (나중에 로그인 연동)
+        follow.setFollowerId(userId);
         follow.setFollowingId(followingId);
         follow.setCreatedAt(LocalDateTime.now());
         return toDto(followRepository.save(follow));
     }
 
     // 언팔로우
-    public void unfollow(Long followingId) {
-        followRepository.findByFollowerId(1L).stream()
+    public void unfollow(Long followingId, Long userId) {
+        followRepository.findByFollowerId(userId).stream()
                 .filter(f -> f.getFollowingId().equals(followingId))
                 .findFirst()
                 .ifPresent(f -> followRepository.deleteById(f.getId()));
     }
 
     // 내가 팔로우한 목록
-    public List<FollowResponseDto> getFollowings() {
-        return followRepository.findByFollowerId(1L).stream()
+    public List<FollowResponseDto> getFollowings(Long userId) {
+        return followRepository.findByFollowerId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
     // 나를 팔로우한 목록
-    public List<FollowResponseDto> getFollowers() {
-        return followRepository.findByFollowingId(1L).stream()
+    public List<FollowResponseDto> getFollowers(Long userId) {
+        return followRepository.findByFollowingId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }

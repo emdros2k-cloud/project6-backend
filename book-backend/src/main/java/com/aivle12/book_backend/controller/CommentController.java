@@ -6,6 +6,7 @@ import com.aivle12.book_backend.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +27,9 @@ public class CommentController {
     @PostMapping("/books/{bookId}/comments")
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long bookId,
-            @RequestBody @Valid CommentRequestDto dto) {
-        return ResponseEntity.status(201).body(commentService.createComment(bookId, dto));
+            @RequestBody @Valid CommentRequestDto dto,
+            @AuthenticationPrincipal Long userId) {
+        return ResponseEntity.status(201).body(commentService.createComment(bookId, dto, userId));
     }
 
     // PATCH /comments/{id}

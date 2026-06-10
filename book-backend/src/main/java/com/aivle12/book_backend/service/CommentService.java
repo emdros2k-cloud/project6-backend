@@ -25,10 +25,10 @@ public class CommentService {
     }
 
     // 댓글 등록
-    public CommentResponseDto createComment(Long bookId, CommentRequestDto dto) {
+    public CommentResponseDto createComment(Long bookId, CommentRequestDto dto, Long userId) {
         Comment comment = new Comment();
         comment.setBookId(bookId);
-        comment.setUserId(1L); // 임시 userId (나중에 로그인 연동)
+        comment.setUserId(userId);
         comment.setContent(dto.getContent());
         comment.setRating(dto.getRating());
         comment.setCreatedAt(LocalDateTime.now());
