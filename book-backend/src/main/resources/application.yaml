@@ -3,17 +3,22 @@ spring:
     name: book-backend
 
   datasource:
-    url: jdbc:mysql://localhost:3306/bookwalk
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:book_db}?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: aivle
 
   jpa:
     hibernate:
-      ddl-auto: create
-    show-sql: true
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+    show-sql: true
 
+jwt:
+  secret: ${JWT_SECRET:local-development-secret-key-for-aivle-book-backend-auth}
+  expiration: 3600000
 
+openai:
+  api-key: ${OPENAI_API_KEY:}
