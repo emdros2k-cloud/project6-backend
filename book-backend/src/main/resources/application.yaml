@@ -16,5 +16,9 @@ spring:
         format_sql: true
     show-sql: true
 
+jwt:
+  secret: ${JWT_SECRET:local-development-secret-key-for-aivle-book-backend-auth}
+  expiration: 3600000 # 토큰 유효기간 1시간
+
 openai:
   api-key: ${OPENAI_API_KEY}
