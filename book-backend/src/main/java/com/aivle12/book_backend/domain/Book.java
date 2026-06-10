@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
-import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
@@ -15,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "book")
 public class Book {
 
     @Id
@@ -24,19 +24,18 @@ public class Book {
     @Column(name = "author_id")
     private Long authorId;
 
-    @NotBlank
     private String title;
 
-    @NotBlank
     private String author;
 
-    @NotBlank
     @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String coverImageUrl;
 
-    @NotBlank
     private String genre;
 
     private String publisher;
@@ -51,5 +50,19 @@ public class Book {
 
     private Integer viewCount;
 
+    private String isbn;
+
     private LocalDate pubDate;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (viewCount == null) viewCount = 0;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
