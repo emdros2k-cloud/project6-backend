@@ -1,2 +1,284 @@
-# 도서 관리 시스템 BackEnd
+# 📚 도서 관리 시스템
 
+> KT AIVLE School AI 트랙 미니 프로젝트 5차 12조 BackEnd
+
+
+<br>
+
+## 📌 목차
+
+- [프로젝트 소개](#-프로젝트-소개)
+- [팀 R&R](#-팀-rr)
+- [기술 스택](#-기술-스택)
+- [ERD](#-erd)
+- [프로젝트 구조](#-프로젝트-구조)
+- [API 엔드포인트](#-api-엔드포인트)
+- [기능 설명](#-기능-설명)
+- [설치 및 실행 방법](#-설치-및-실행-방법)
+- [화면 미리보기](#-화면-미리보기)
+- [트러블슈팅](#-트러블슈팅)
+
+<br>
+
+## 🖥 프로젝트 소개
+
+<!-- 프로젝트 배경, 목적, 간단한 설명을 작성하세요 -->
+기존 Frontend 미니프로젝트(json-server 기반)를 분석하여, 실제 Spring Boot + MySQL 백엔드로 전환하는 프로젝트입니다.
+
+### Before — Frontend 단독 구조 (json-server)
+
+```mermaid 
+graph TD
+    User(("👤 사용자"))
+    Client["💻 FrontEnd<br>(React + Vite)"]
+    AI["🤖 OpenAI API"]
+    Server["🗄️ BackEnd<br>(json-server)"]
+ 
+    User -- "1. 도서 등록/수정 내용 및<br>표지 프롬프트 입력" --> Client
+    Client -- "2. 표지 프롬프트 전송" --> AI
+    AI -- "3. 생성된 이미지 URL 반환" --> Client
+    Client -- "4. 도서 정보 + 이미지 URL<br>최종 저장 요청 (POST/PATCH)" --> Server
+    Server -- "5. 저장 완료 및 데이터 응답" --> Client
+```
+
+### After — FullStack 구조 (Spring Boot + MySQL)
+
+```mermaid
+graph LR
+    User(("🖥 클라이언트"))
+    Client["⚛️ React"]
+    Server["🌿 Spring Boot"]
+    DB[("🛢 DB")]
+    AI["🤖 OpenAI"]
+ 
+    User -- "HTTP Protocol<br>UI 렌더링" --> Client
+    Client -- "REST API 및 fetch<br>도서 조회 등" --> Server
+    Client -- "Data URL(base64) 저장" --> Server
+    Server -- "JSON 응답" --> Client
+    Server -- "JPA" --> DB
+    DB -- "도서정보·이미지 URL<br>업데이트 후 저장" --> Server
+    Client -- "OpenAI API 호출<br>(API Key 사용)" --> AI
+    AI -- "이미지 데이터(base64) 반환" --> Client
+```
+
+<br>
+
+## 👥 팀 R&R
+
+| 이름 | 역할           | 담당 기능        |
+|------|--------------|--------------|
+| 박태정 | 조장  | PM·기획, AI/Frontend 연동 |
+| 김다진 | PPT          | 백엔드 개발 (1)   |
+| 황민서 | 검토담당자        | 백엔드 개발 (2)   |
+| 배수성 | 타임키퍼         | 백엔드 개발 (2)   |
+| 유지은 | 발표자          | 백엔드 개발 (3)   |
+| 이채은 | 서기           | AI/Frontend 연동 |
+| 김다애 | PPT          | 통합/예외 처리     |
+
+<br>
+
+## 🛠 기술 스택
+
+### Environment
+<img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=intellijidea&logoColor=white" alt=""> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white" alt=""> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white" alt="">
+
+### Backend
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=openjdk&logoColor=white" alt=""> <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt=""> <img src="https://img.shields.io/badge/spring mvc-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt=""> <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white" alt=""> <img src="https://img.shields.io/badge/lombok-CA0124?style=for-the-badge&logo=lombok&logoColor=white" alt=""> <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="">
+
+### Frontend
+<img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt=""> <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt=""> <img src="https://img.shields.io/badge/vite-9135FF?style=for-the-badge&logo=vite&logoColor=black" alt=""> <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt=""> <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt=""> <img src="https://img.shields.io/badge/OpenAI API-412991?style=for-the-badge&logo=openai&logoColor=white" alt="">
+
+### Communication
+<img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt=""> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white" alt=""> <img src="https://img.shields.io/badge/zoom-0B5CFF?style=for-the-badge&logo=zoom&logoColor=white" alt=""> <img src="https://img.shields.io/badge/Microsoft Teams-6264A7?style=for-the-badge&logo=microsoftteams&logoColor=white" alt="">
+
+<br>
+
+## 🗂 ERD
+
+<!-- ERD 이미지를 첨부하거나 아래 필드 목록을 채워주세요 -->
+
+```
+USER
+- id (PK)           유저 고유번호
+- email (UK)        이메일 (로그인 ID)
+- password          암호화된 비밀번호
+- nickname (UK)     닉네임
+- created_at
+ 
+PROFILE
+- user_id (PK, FK)  유저 고유번호 (1:1)
+- bio               한줄 소개 / 프로필 정보
+- avatar_url        프로필 이미지 URL
+- updated_at
+ 
+BOOK
+- id (PK)           도서 고유번호
+- author_id (FK)    작가(User) 고유번호
+- title             도서 제목
+- author            작가명
+- content           도서 본문 / 소개 내용
+- coverImageUrl     AI 생성 표지 이미지 URL
+- genre             장르
+- publisher         출판사
+- price             가격
+- pages             페이지 수
+- isbn (UK)         ISBN 번호
+- pubDate           출판일
+- viewCount         조회수
+- rating_sum        별점 누적 평균
+- comment_count     총 댓글(리뷰) 수
+- createdAt
+- updatedAt
+ 
+FOLLOW
+- id (PK)           팔로우 고유번호
+- follower_id (FK)  팔로우한 유저 ID
+- author_id (FK)    팔로우 대상 작가 ID
+- created_at
+ 
+FAVORITE
+- id (PK)           즐겨찾기 고유번호
+- user_id (FK)      유저 고유번호
+- book_id (FK)      도서 고유번호
+- created_at
+ 
+COMMENT
+- id (PK)           댓글 및 별점 고유번호
+- book_id (FK)      도서 고유번호
+- user_id (FK)      유저 고유번호
+- content           댓글/리뷰 내용
+- rating            별점 점수 (1~5점)
+- created_at
+- updated_at
+```
+
+<!-- ![ERD](./docs/erd.png) -->
+
+<br>
+
+## 📂 프로젝트 구조
+
+```
+src/main/java/com/aivle/bookapp/
+├── domain/
+│   └── Book.java
+├── repository/
+│   └── BookRepository.java
+├── service/
+│   └── BookService.java
+├── controller/
+│   └── BookController.java
+├── config/
+│   └── WebConfig.java
+└── BookappApplication.java
+
+src/main/resources/
+└── application.yml
+```
+
+<br>
+
+## 🔌 API 엔드포인트
+
+### User
+| Method | URI | 설명 |
+|--------|-----|------|
+| POST | `/users/profile` | 프로필 등록 |
+| PATCH | `/users/profile` | 프로필 수정 |
+| GET | `/users/profile` | 내 프로필 조회 |
+| GET | `/users/comments` | 내 댓글 조회 |
+| GET | `/users/me/books` | 내 작품 목록 조회 |
+| GET | `/users/me/favorites` | 내 즐겨찾기 조회 |
+
+### Auth
+| Method | URI | 설명 |
+|--------|-----|------|
+| POST | `/users/signup` | 회원가입 |
+| POST | `/users/login` | 로그인 |
+| POST | `/users/logout` | 로그아웃 |
+| GET | `/users/me` | 마이페이지 |
+| GET | `/users/check-nickname` | 닉네임 중복 확인 |
+| GET | `/users/check-email` | 이메일 중복 확인 |
+
+### Book
+| Method | URI | 설명 |
+|--------|-----|------|
+| GET | `/books` | 도서 목록 조회 |
+| POST | `/books` | 도서 등록 |
+| PATCH | `/books/{id}` | 도서 수정 |
+| DELETE | `/books/{id}` | 도서 삭제 |
+| GET | `/books/{id}` | 도서 상세 조회 |
+| PATCH | `/books/{id}/views` | 도서 조회수 증가 |
+| POST | `/v1/images/generations` | AI 표지 생성 |
+| PATCH | `/books/{id}/cover` | AI 표지 저장 |
+| PATCH | `/books/{id}/cover-editor` | AI 표지 수정 |
+
+### Favorite
+| Method | URI | 설명 |
+|--------|-----|------|
+| POST | `/books/{id}/favorites` | 즐겨찾기 등록 |
+| DELETE | `/books/{id}/favorites` | 즐겨찾기 해제 |
+
+### Comment 
+| Method | URI | 설명 |
+|--------|-----|------|
+| POST | `/books/{id}/comments` | 댓글 등록 |
+| DELETE | `/comments/{id}` | 댓글 삭제 |
+| PATCH | `/comments/{id}` | 댓글 수정 |
+| GET | `/books/{id}/comments` | 댓글 조회 |
+
+### Follow
+| Method | URI | 설명 |
+|--------|-----|------|
+| POST | `/authors/{id}/follows` | 팔로우 |
+| DELETE | `/authors/{id}/follows` | 언팔로우 |
+| GET | `/users/followings` | 팔로잉 목록 조회 |
+| GET | `/users/followers` | 팔로워 목록 조회 |
+
+<br>
+
+## 💡 기능 설명
+
+| 기능 | 설명 |
+|------|------|
+| | |
+| | |
+
+<br>
+
+## ⚙️ 설치 및 실행 방법
+
+### 사전 요구사항
+
+- Java
+- (기타 필요한 환경)
+
+### 실행 순서
+
+```bash
+# 1. 저장소 클론
+git clone 
+
+# 2. 디렉토리 이동
+cd 
+
+# 3. 백엔드 실행
+./gradlew bootRun
+```
+
+<br>
+
+## 🖼 화면 미리보기
+
+| 페이지 | 미리보기 |
+|--------|----------|
+| | |
+| | |
+
+<br>
+
+## 🔧 트러블슈팅
+
+| 이슈 | 원인 | 해결 방법 |
+|------|------|-----------|
+| | | |
