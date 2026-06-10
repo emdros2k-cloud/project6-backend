@@ -67,4 +67,10 @@ public class BookController {
     public ResponseEntity<BookCoverGenerateResponse> generateCover(@Valid @RequestBody BookCoverGenerateRequest request) {
         return ResponseEntity.ok(aiCoverService.generateCovers(request));
     }
+
+    @PostMapping("/{id}/cover/generate")
+    public ResponseEntity<BookCoverGenerateResponse> generateCoverForBook(@PathVariable Long id,
+                                                                          @Valid @RequestBody BookCoverGenerateRequest request) {
+        return ResponseEntity.ok(aiCoverService.generateCoversForBook(id, request));
+    }
 }
