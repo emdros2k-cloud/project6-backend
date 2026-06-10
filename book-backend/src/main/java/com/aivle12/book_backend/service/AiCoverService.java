@@ -1,13 +1,17 @@
 package com.aivle12.book_backend.service;
 
+import com.aivle12.book_backend.domain.Book;
 import com.aivle12.book_backend.dto.BookCoverGenerateRequest;
 import com.aivle12.book_backend.dto.BookCoverGenerateResponse;
+import com.aivle12.book_backend.exception.BookNotFoundException;
+import com.aivle12.book_backend.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -25,15 +29,17 @@ public class AiCoverService {
     private String apiKey;
 
     private final RestTemplate restTemplate;
+    private final BookRepository bookRepository;
 
     public BookCoverGenerateResponse generateCovers(BookCoverGenerateRequest request) {
         String model = request.getModel();
         String quality = mapQuality(model, request.getQuality());
         String size = getSize(model);
+        String prompt = buildPrompt(request);
 
         List<CompletableFuture<String>> futures = IntStream.range(0, IMAGE_COUNT)
                 .mapToObj(i -> CompletableFuture.supplyAsync(
-                        () -> callOpenAI(request.getPrompt(), model, quality, size)
+                        () -> callOpenAI(prompt, model, quality, size)
                 ))
                 .collect(Collectors.toList());
 
@@ -50,14 +56,17 @@ public class AiCoverService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
 
-        Map<String, Object> body = Map.of(
-                "model", model,
-                "prompt", prompt,
-                "n", 1,
-                "size", size,
-                "quality", quality,
-                "response_format", "b64_json"
-        );
+        Map<String, Object> body = new HashMap<>();
+        body.put("model", model);
+        body.put("prompt", prompt);
+        body.put("n", 1);
+        body.put("size", size);
+        body.put("quality", quality);
+        if ("dall-e-3".equals(model)) {
+            body.put("response_format", "b64_json");
+        } else {
+            body.put("output_format", "png");
+        }
 
         ResponseEntity<Map> response = restTemplate.exchange(
                 OPENAI_URL,
@@ -69,6 +78,70 @@ public class AiCoverService {
         List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
         String b64 = (String) data.get(0).get("b64_json");
         return "data:image/png;base64," + b64;
+    }
+
+    public BookCoverGenerateResponse generateCoversForBook(Long bookId, BookCoverGenerateRequest request) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
+
+        String model = request.getModel();
+        String quality = mapQuality(model, request.getQuality());
+        String size = getSize(model);
+        String prompt = buildPromptFromBook(book, request);
+
+        List<CompletableFuture<String>> futures = IntStream.range(0, IMAGE_COUNT)
+                .mapToObj(i -> CompletableFuture.supplyAsync(
+                        () -> callOpenAI(prompt, model, quality, size)
+                ))
+                .collect(Collectors.toList());
+
+        List<String> images = futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+        return new BookCoverGenerateResponse(images);
+    }
+
+    private String buildPrompt(BookCoverGenerateRequest request) {
+        StringBuilder sb = new StringBuilder();
+        if (request.getTitle() != null && !request.getTitle().isBlank())
+            sb.append(request.getTitle());
+        if (request.getGenre() != null && !request.getGenre().isBlank())
+            sb.append(", ").append(request.getGenre()).append(" genre");
+        if (request.getAuthor() != null && !request.getAuthor().isBlank())
+            sb.append(", written by ").append(request.getAuthor());
+        if (request.getContent() != null && !request.getContent().isBlank())
+            sb.append(", ").append(request.getContent());
+        if (request.getPrompt() != null && !request.getPrompt().isBlank())
+            sb.append(", ").append(request.getPrompt());
+        appendOptions(sb, request);
+        sb.append(", book cover");
+        return sb.toString();
+    }
+
+    private String buildPromptFromBook(Book book, BookCoverGenerateRequest request) {
+        StringBuilder sb = new StringBuilder();
+        if (book.getTitle() != null) sb.append(book.getTitle());
+        if (book.getGenre() != null) sb.append(", ").append(book.getGenre()).append(" genre");
+        if (book.getAuthor() != null) sb.append(", written by ").append(book.getAuthor());
+        if (book.getContent() != null && !book.getContent().isBlank())
+            sb.append(", ").append(book.getContent());
+        if (request.getPrompt() != null && !request.getPrompt().isBlank())
+            sb.append(", ").append(request.getPrompt());
+        appendOptions(sb, request);
+        sb.append(", book cover");
+        return sb.toString();
+    }
+
+    private void appendOptions(StringBuilder sb, BookCoverGenerateRequest request) {
+        if (request.getStyle() != null && !request.getStyle().isBlank())
+            sb.append(", ").append(request.getStyle()).append(" style");
+        if (request.getBackground() != null && !request.getBackground().isBlank())
+            sb.append(", ").append(request.getBackground()).append(" background");
+        if (request.getLighting() != null && !request.getLighting().isBlank())
+            sb.append(", ").append(request.getLighting());
+        if (request.getTypography() != null && !request.getTypography().isBlank())
+            sb.append(", ").append(request.getTypography()).append(" typography");
     }
 
     private String mapQuality(String model, String quality) {
