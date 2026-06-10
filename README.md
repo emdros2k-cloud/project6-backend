@@ -209,7 +209,7 @@ src/main/resources/
 | DELETE | `/books/{id}` | 도서 삭제 |
 | GET | `/books/{id}` | 도서 상세 조회 |
 | PATCH | `/books/{id}/views` | 도서 조회수 증가 |
-| POST | `/v1/images/generations` | AI 표지 생성 |
+| POST | `/books/cover/generate` | AI 표지 생성 |
 | PATCH | `/books/{id}/cover` | AI 표지 저장 |
 | PATCH | `/books/{id}/cover-editor` | AI 표지 수정 |
 
