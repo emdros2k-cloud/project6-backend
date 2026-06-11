@@ -8,6 +8,7 @@
 ## 📌 목차
 
 - [프로젝트 소개](#-프로젝트-소개)
+- [개발 기간](#-개발-기간)
 - [팀 R&R](#-팀-rr)
 - [기술 스택](#-기술-스택)
 - [ERD](#-erd)
@@ -63,6 +64,12 @@ graph LR
 
 <br>
 
+## 📅 개발 기간
+
+2026.06.09 ~ 2026.06.12
+
+<br>
+
 ## 👥 팀 R&R
 
 | 이름 | 역할           | 담당 기능        |
@@ -98,12 +105,12 @@ graph LR
 <!-- ERD 이미지를 첨부하거나 아래 필드 목록을 채워주세요 -->
 
 ```
-USER
-- id (PK)           유저 고유번호
-- email (UK)        이메일 (로그인 ID)
-- password          암호화된 비밀번호
-- nickname (UK)     닉네임
-- created_at
+USERS
+- id (PK)               유저 고유번호
+- email (UK)            이메일 (로그인 ID)      @NotNull @Unique
+- password              암호화된 비밀번호        @NotNull
+- nickname (UK)         닉네임                  @NotNull @Unique
+- created_at                                    @PrePersist 자동 설정
  
 PROFILE
 - user_id (PK, FK)  유저 고유번호 (1:1)
@@ -112,23 +119,21 @@ PROFILE
 - updated_at
  
 BOOK
-- id (PK)           도서 고유번호
-- author_id (FK)    작가(User) 고유번호
-- title             도서 제목
-- author            작가명
-- content           도서 본문 / 소개 내용
-- coverImageUrl     AI 생성 표지 이미지 URL
-- genre             장르
-- publisher         출판사
-- price             가격
-- pages             페이지 수
-- isbn (UK)         ISBN 번호
-- pubDate           출판일
-- viewCount         조회수
-- rating_sum        별점 누적 평균
-- comment_count     총 댓글(리뷰) 수
-- createdAt
-- updatedAt
+- id (PK)               도서 고유번호
+- author_id             작가(User) 고유번호
+- title                 도서 제목
+- author                작가명
+- content (LONGTEXT)    도서 본문 / 소개 내용
+- cover_image_url       AI 생성 표지 이미지 URL  (LONGTEXT)
+- genre                 장르
+- publisher             출판사
+- price                 가격
+- pages                 페이지 수
+- isbn                  ISBN 번호
+- pub_date              출판일
+- view_count            조회수                  @PrePersist 기본값 0
+- created_at                                    @PrePersist 자동 설정
+- updated_at                                    @PreUpdate 자동 갱신
  
 FOLLOW
 - id (PK)           팔로우 고유번호
@@ -137,10 +142,11 @@ FOLLOW
 - created_at
  
 FAVORITE
-- id (PK)           즐겨찾기 고유번호
-- user_id (FK)      유저 고유번호
-- book_id (FK)      도서 고유번호
-- created_at
+- id (PK)               즐겨찾기 고유번호
+- user_id (FK)          유저 고유번호            @NotNull
+- book_id (FK)          도서 고유번호            @NotNull
+- created_at                                    @PrePersist 자동 설정
+* UNIQUE (user_id, book_id)
  
 COMMENT
 - id (PK)           댓글 및 별점 고유번호
@@ -159,21 +165,39 @@ COMMENT
 ## 📂 프로젝트 구조
 
 ```
-src/main/java/com/aivle/bookapp/
+book-backend/src/main/java/com/aivle12/book_backend/
 ├── domain/
-│   └── Book.java
-├── repository/
-│   └── BookRepository.java
+│   ├── Book.java                  # 도서 Entity (@PrePersist/@PreUpdate 자동 시간 설정, 조회수)
+│   ├── Comment.java                # 댓글 Entity (bookId, userId, rating)
+│   ├── Favorite.java               # 즐겨찾기 Entity (UNIQUE: user_id + book_id)
+│   ├── Follow.java                 # 팔로우 Entity (followerId, followingId)
+│   └── User.java                   # 회원 Entity (email, nickname Unique)
+├── dto/                             # 요청/응답 DTO (Entity 직접 노출 방지)
+├── repository/                      # JpaRepository 상속, 도메인별 CRUD/조회 메서드
 ├── service/
-│   └── BookService.java
+│   ├── AuthService.java            # 회원가입/로그인/내정보, 비밀번호 암호화·JWT 발급
+│   ├── BookService.java            # 도서 CRUD, 조회수 증가, 표지 변경 (@Transactional)
+│   ├── AiCoverService.java         # OpenAI 이미지 생성 API 호출, 표지 3장 생성
+│   ├── CommentService.java         # 댓글 CRUD
+│   ├── FavoriteService.java        # 즐겨찾기 등록/삭제
+│   └── FollowService.java          # 팔로우/언팔로우, 팔로잉·팔로워 목록 조회
 ├── controller/
-│   └── BookController.java
+│   ├── UserController.java         # /users - 회원가입, 로그인, 내정보, 중복확인
+│   ├── BookController.java         # /books - CRUD, 조회수 증가, AI 표지 생성
+│   ├── CommentController.java      # /books/{bookId}/comments, /comments/{id}
+│   ├── FavoriteController.java     # /books/{bookId}/favorites
+│   └── FollowController.java       # /authors/{id}/follows, /users/followings|followers
+├── security/
+│   ├── JwtTokenProvider.java       # JWT 토큰 생성/검증/userId 추출
+│   └── JwtAuthenticationFilter.java # 요청마다 JWT 검증 후 SecurityContext에 인증정보 설정
+├── exception/                       # 커스텀 예외 + GlobalExceptionHandler(전역 예외 처리)
 ├── config/
-│   └── WebConfig.java
-└── BookappApplication.java
+│   ├── SecurityConfig.java         # Spring Security 설정 (JWT 필터, 인가 규칙, BCrypt)
+│   └── WebConfig.java              # CORS 설정 (프론트 localhost:5173 연동)
+└── BookBackendApplication.java
 
 src/main/resources/
-└── application.yml
+└── application.yaml                # MySQL DB 연결, JPA, JWT, OpenAI API Key 설정
 ```
 
 <br>
@@ -243,6 +267,24 @@ src/main/resources/
 |------|------|
 | | |
 | | |
+
+<br>
+
+## 🧪 테스트
+
+### Postman 테스트
+<!-- Postman 테스트 캡처 이미지를 아래에 첨부하세요 -->
+
+| 테스트 항목 | 결과 |
+|-------------|------|
+| GET /books | |
+| GET /books/{id} | |
+| POST /books | |
+| PATCH /books/{id} | |
+| DELETE /books/{id} | |
+
+### 풀스택 동작 확인
+<!-- React 화면 + Postman 연동 확인 캡처를 첨부하세요 -->
 
 <br>
 
