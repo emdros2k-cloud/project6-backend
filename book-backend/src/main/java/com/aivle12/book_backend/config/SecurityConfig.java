@@ -59,9 +59,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/comments/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/comments/*").authenticated()
 
-                        // 팔로우, 언팔로우, 팔로잉/팔로워 목록
+                        // 팔로우, 언팔로우, 팔로우 여부 조회, 팔로잉/팔로워 목록
                         .requestMatchers(HttpMethod.POST, "/authors/*/follows").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/authors/*/follows").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/authors/*/follows/status").authenticated()
                         .requestMatchers("/users/followings", "/users/followers").authenticated()
 
                         .anyRequest().permitAll()

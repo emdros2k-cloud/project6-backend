@@ -24,10 +24,11 @@ public class BookService {
     private final BookRepository bookRepository;
 
     @Transactional(readOnly = true)
-    public List<BookResponse> getBooks() {
-        return bookRepository.findAll().stream()
-                .map(BookResponse::from)
-                .collect(Collectors.toList());
+    public List<BookResponse> getBooks(Long authorId) {
+        List<Book> books = (authorId != null)
+                ? bookRepository.findByAuthorId(authorId)
+                : bookRepository.findAll();
+        return books.stream().map(BookResponse::from).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

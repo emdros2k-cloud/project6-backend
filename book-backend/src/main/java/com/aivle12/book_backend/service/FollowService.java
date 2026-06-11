@@ -2,6 +2,7 @@ package com.aivle12.book_backend.service;
 
 import com.aivle12.book_backend.domain.Follow;
 import com.aivle12.book_backend.dto.FollowResponseDto;
+import com.aivle12.book_backend.dto.FollowStatusResponse;
 import com.aivle12.book_backend.exception.FollowAlreadyExistsException;
 import com.aivle12.book_backend.exception.FollowNotFoundException;
 import com.aivle12.book_backend.repository.FollowRepository;
@@ -60,6 +61,12 @@ public class FollowService {
         return followRepository.findByFollowingId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public FollowStatusResponse isFollowing(Long followingId, Long userId) {
+        boolean following = followRepository.existsByFollowerIdAndFollowingId(userId, followingId);
+        return new FollowStatusResponse(following);
     }
 
     private FollowResponseDto toDto(Follow follow) {

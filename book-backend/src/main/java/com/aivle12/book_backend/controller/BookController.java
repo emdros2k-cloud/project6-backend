@@ -21,8 +21,9 @@ public class BookController {
     private final AiCoverService aiCoverService;
 
     @GetMapping
-    public ResponseEntity<List<BookResponse>> getBooks() {
-        return ResponseEntity.ok(bookService.getBooks());
+    public ResponseEntity<List<BookResponse>> getBooks(
+            @RequestParam(required = false) Long authorId) {
+        return ResponseEntity.ok(bookService.getBooks(authorId));
     }
 
     @GetMapping("/{id}")

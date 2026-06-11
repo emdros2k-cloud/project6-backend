@@ -1,6 +1,7 @@
 package com.aivle12.book_backend.controller;
 
 import com.aivle12.book_backend.dto.FollowResponseDto;
+import com.aivle12.book_backend.dto.FollowStatusResponse;
 import com.aivle12.book_backend.service.FollowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,14 @@ public class FollowController {
             @AuthenticationPrincipal Long userId) {
         followService.unfollow(id, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    // GET /authors/{id}/follows/status
+    @GetMapping("/authors/{id}/follows/status")
+    public ResponseEntity<FollowStatusResponse> followStatus(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Long userId) {
+        return ResponseEntity.ok(followService.isFollowing(id, userId));
     }
 
     // GET /users/followings
