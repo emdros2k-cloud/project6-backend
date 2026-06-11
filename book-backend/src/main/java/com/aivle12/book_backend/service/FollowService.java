@@ -5,9 +5,12 @@ import com.aivle12.book_backend.dto.FollowResponseDto;
 import com.aivle12.book_backend.exception.FollowAlreadyExistsException;
 import com.aivle12.book_backend.exception.FollowNotFoundException;
 import com.aivle12.book_backend.repository.FollowRepository;
+import com.aivle12.book_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,8 +22,15 @@ import java.util.stream.Collectors;
 public class FollowService {
 
     private final FollowRepository followRepository;
+    private final UserRepository userRepository;
 
     public FollowResponseDto follow(Long followingId, Long userId) {
+        if (userId.equals(followingId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다.");
+        }
+        if (!userRepository.existsById(followingId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다.");
+        }
         if (followRepository.existsByFollowerIdAndFollowingId(userId, followingId)) {
             throw new FollowAlreadyExistsException(userId, followingId);
         }

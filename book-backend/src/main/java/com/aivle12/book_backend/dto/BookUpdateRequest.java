@@ -1,5 +1,6 @@
 package com.aivle12.book_backend.dto;
 
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,9 +16,13 @@ public class BookUpdateRequest {
     private String coverImageUrl;
     private String genre;
     private String publisher;
-    private Integer price;
-    private Integer pages;
-    private String isbn;
 
+    @Positive
+    private Integer price;
+
+    @Positive
+    private Integer pages;
+
+    private String isbn;
     private LocalDate pubDate;
 }
