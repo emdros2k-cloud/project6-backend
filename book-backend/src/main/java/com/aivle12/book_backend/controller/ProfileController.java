@@ -67,8 +67,6 @@ public class ProfileController{
         return profileService.update(userId, profile);
     }
 
-    @PatchMapping("/profile/update")
-
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteProfile(@AuthenticationPrincipal Long userId){
         profileService.delete(userId);

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/book-backend.iml" filepath="$PROJECT_DIR$/.idea/book-backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aivle12.book-backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aivle12.book-backend.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.aivle12.book-backend.main~1.iml" filepath="$PROJECT_DIR$/.idea/modules/com.aivle12.book-backend.main~1.iml" />
     </modules>
   </component>
 </project>

@@ -33,7 +33,7 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne (mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true, fetch= FetchType.LAZY)
+    @OneToOne(mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true, fetch= FetchType.LAZY)
     @JoinColumn(name="user_email", referencedColumnName="email")
     private Profile profile;
 

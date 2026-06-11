@@ -12,10 +12,9 @@ import java.util.List;
 
 @RequiredArgsConstructor//final 붙는 필드만 받는 생성자
 @Service
-//여기 이제 각 객체에 대응하도록 imort되었다고 가정할게요
 
 
-public class UserService {
+public class AuthorService {
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     /*
@@ -58,7 +57,7 @@ public class UserService {
         if (user.getNickname()!=null){
             existing.setNickname(user.getNickname());
         }
-        //id와 created_at은 애초에 수정이 불가할 것으로 보임
+        //id와 created_at은 애초에 수정이 불가함
 
         return userRepository.save(existing);
     }

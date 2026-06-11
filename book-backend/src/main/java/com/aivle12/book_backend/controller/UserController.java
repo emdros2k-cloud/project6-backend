@@ -1,83 +1,56 @@
 package com.aivle12.book_backend.controller;
 
-import com.aivle12.book_backend.domain.User;
-import com.aivle12.book_backend.repository.UserRepository;
-import com.aivle12.book_backend.service.UserService;
-/*
-import com.aivle12.book_backend.domain.Profile;
-import com.aivle12.book_backend.repository.ProfileRepository;
-import com.aivle12.book_backend.service.ProfileService;
- */
+import com.aivle12.book_backend.dto.AvailabilityResponse;
+import com.aivle12.book_backend.dto.LoginRequest;
+import com.aivle12.book_backend.dto.LoginResponse;
+import com.aivle12.book_backend.dto.MessageResponse;
+import com.aivle12.book_backend.dto.SignupRequest;
+import com.aivle12.book_backend.dto.UserResponse;
+import com.aivle12.book_backend.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/users")
 @RequiredArgsConstructor
-public class UserController{
-    private final UserRepository userRepository;
-    private final UserService userService;
+public class UserController {
 
+    private final AuthService authService;
 
-    @GetMapping("/users/by-email")
-    public Optional<User> getUser(@AuthenticationPrincipal Long id) {
-        return userRepository.findById(id);
+    @PostMapping("/signup")
+    public UserResponse signup(@Valid @RequestBody SignupRequest request) {
+        return authService.signup(request);
     }
 
-    @PostMapping("/users")
-    public User addUser(@RequestBody User user){
-        return userService.addUser(user);
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 
-    @PatchMapping("/users")
-    public User updateUser(@AuthenticationPrincipal Long id, @RequestBody User user){
-        return userService.updateUser(id,user);
+    @GetMapping("/me")
+    public UserResponse me(@AuthenticationPrincipal Long userId) {
+        return authService.getMe(userId);
     }
 
-    @GetMapping("/users")
-    public List<User> allUser() {return userService.findAll();
+    @GetMapping("/check-email")
+    public AvailabilityResponse checkEmail(@RequestParam String email) {
+        return authService.checkEmailAvailable(email);
     }
 
-    @DeleteMapping("/users")
-    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal Long id) {
-    userService.delete(id);
-    return ResponseEntity.noContent().build();
+    @GetMapping("/check-nickname")
+    public AvailabilityResponse checkNickname(@RequestParam String nickname) {
+        return authService.checkNicknameAvailable(nickname);
     }
 
-
-
-    //여기는 아직 다른영역
-    /*
-
-    @GetMapping("/users/comments")
-    public List<Comment> getComments(@RequestParam Long id){}
-
-    @GetMapping("/users/me/books")
-    public List<Books> getBooks(@RequestParam Long id){
-
+    @PostMapping("/logout")
+    public MessageResponse logout() {
+        return new MessageResponse("로그아웃되었습니다.");
     }
-
-    @GetMapping("/users/me/favorites")
-    public List<Favorites>(@RequestParam Long id){}
-
-
-    @GetMapping("/users/me/followings")
-    public List<Favorites>(@RequestParam Long id){
-
-
-        }
-    @GetMapping("/users/me/followers")
-    public List<Favorites>(@RequestParam Long id){
-
-
-    }
-
-     */
-
-
 }
