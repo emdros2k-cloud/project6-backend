@@ -14,7 +14,7 @@ public class RestTemplateConfig {
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
                 .connectTimeout(Duration.ofSeconds(10))
-                .readTimeout(Duration.ofSeconds(120)) // 이미지 생성은 오래 걸릴 수 있음
+                .readTimeout(Duration.ofSeconds(300))
                 .build();
     }
 }
