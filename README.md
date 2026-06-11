@@ -204,60 +204,7 @@ src/main/resources/
 
 ## 🔌 API 엔드포인트
 
-### User
-| Method | URI | 설명 |
-|--------|-----|------|
-| POST | `/users/profile` | 프로필 등록 |
-| PATCH | `/users/profile` | 프로필 수정 |
-| GET | `/users/profile` | 내 프로필 조회 |
-| GET | `/users/comments` | 내 댓글 조회 |
-| GET | `/users/me/books` | 내 작품 목록 조회 |
-| GET | `/users/me/favorites` | 내 즐겨찾기 조회 |
-
-### Auth
-| Method | URI | 설명 |
-|--------|-----|------|
-| POST | `/users/signup` | 회원가입 |
-| POST | `/users/login` | 로그인 |
-| POST | `/users/logout` | 로그아웃 |
-| GET | `/users/me` | 마이페이지 |
-| GET | `/users/check-nickname` | 닉네임 중복 확인 |
-| GET | `/users/check-email` | 이메일 중복 확인 |
-
-### Book
-| Method | URI | 설명 |
-|--------|-----|------|
-| GET | `/books` | 도서 목록 조회 |
-| POST | `/books` | 도서 등록 |
-| PATCH | `/books/{id}` | 도서 수정 |
-| DELETE | `/books/{id}` | 도서 삭제 |
-| GET | `/books/{id}` | 도서 상세 조회 |
-| PATCH | `/books/{id}/views` | 도서 조회수 증가 |
-| POST | `/books/cover/generate` | AI 표지 생성 |
-| PATCH | `/books/{id}/cover` | AI 표지 저장 |
-| PATCH | `/books/{id}/cover-editor` | AI 표지 수정 |
-
-### Favorite
-| Method | URI | 설명 |
-|--------|-----|------|
-| POST | `/books/{id}/favorites` | 즐겨찾기 등록 |
-| DELETE | `/books/{id}/favorites` | 즐겨찾기 해제 |
-
-### Comment 
-| Method | URI | 설명 |
-|--------|-----|------|
-| POST | `/books/{id}/comments` | 댓글 등록 |
-| DELETE | `/comments/{id}` | 댓글 삭제 |
-| PATCH | `/comments/{id}` | 댓글 수정 |
-| GET | `/books/{id}/comments` | 댓글 조회 |
-
-### Follow
-| Method | URI | 설명 |
-|--------|-----|------|
-| POST | `/authors/{id}/follows` | 팔로우 |
-| DELETE | `/authors/{id}/follows` | 언팔로우 |
-| GET | `/users/followings` | 팔로잉 목록 조회 |
-| GET | `/users/followers` | 팔로워 목록 조회 |
+> 📋 [API 명세서 (Notion)](https://app.notion.com/p/API-Docs-cc1302230b42838fa095018595e8b1c7)
 
 <br>
 
