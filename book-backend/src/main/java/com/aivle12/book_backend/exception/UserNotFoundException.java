@@ -2,8 +2,8 @@ package com.aivle12.book_backend.exception;
 
 public class UserNotFoundException
         extends RuntimeException {
-    public UserNotFoundException(String email) {
+    public UserNotFoundException(Long id) {
 
-        super("email "+email+" not exist");
+        super("User "+id+" not exist");
     }
 }

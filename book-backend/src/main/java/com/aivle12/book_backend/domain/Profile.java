@@ -16,8 +16,12 @@ import java.time.LocalDateTime;
 public class Profile{
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;//아이디(자동생성)
+
+    @OneToOne (fetch=FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name="id")
+    private User user;
 
     @Column(nullable=false)
     private String bio;//자기소개
@@ -38,7 +42,5 @@ public class Profile{
         this.createdAt = LocalDateTime.now();
     }
 
-    private String email;
-    //user 필드와 대응
 
 }

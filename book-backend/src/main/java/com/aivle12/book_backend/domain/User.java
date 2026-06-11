@@ -1,15 +1,6 @@
 package com.aivle12.book_backend.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,7 +33,7 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne (cascade=CascadeType.ALL)
+    @OneToOne (mappedBy="user", cascade=CascadeType.ALL, orphanRemoval=true, fetch= FetchType.LAZY)
     @JoinColumn(name="user_email", referencedColumnName="email")
     private Profile profile;
 

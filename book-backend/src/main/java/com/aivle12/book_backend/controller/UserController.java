@@ -3,12 +3,15 @@ package com.aivle12.book_backend.controller;
 import com.aivle12.book_backend.domain.User;
 import com.aivle12.book_backend.repository.UserRepository;
 import com.aivle12.book_backend.service.UserService;
+/*
 import com.aivle12.book_backend.domain.Profile;
 import com.aivle12.book_backend.repository.ProfileRepository;
 import com.aivle12.book_backend.service.ProfileService;
+ */
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +25,8 @@ public class UserController{
 
 
     @GetMapping("/users/by-email")
-    public Optional<User> getUser(@RequestParam String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUser(@AuthenticationPrincipal Long id) {
+        return userRepository.findById(id);
     }
 
     @PostMapping("/users")
@@ -31,20 +34,21 @@ public class UserController{
         return userService.addUser(user);
     }
 
-    @PatchMapping("/users/{email}")
-    public User updateUser(@PathVariable String email, @RequestBody User user){
-        return userService.updateUser(email,user);
+    @PatchMapping("/users")
+    public User updateUser(@AuthenticationPrincipal Long id, @RequestBody User user){
+        return userService.updateUser(id,user);
     }
 
     @GetMapping("/users")
     public List<User> allUser() {return userService.findAll();
     }
 
-    @DeleteMapping("/users/{email}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
-    userService.delete(email);
+    @DeleteMapping("/users")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal Long id) {
+    userService.delete(id);
     return ResponseEntity.noContent().build();
-}
+    }
+
 
 
     //여기는 아직 다른영역
@@ -59,7 +63,7 @@ public class UserController{
     }
 
     @GetMapping("/users/me/favorites")
-    public List<Favorites>(@RequestParam Long id){
+    public List<Favorites>(@RequestParam Long id){}
 
 
     @GetMapping("/users/me/followings")

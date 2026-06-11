@@ -37,11 +37,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findByEmail(String email){return userRepository.findByEmail(email).orElseThrow(()->
-            new IllegalArgumentException("존재하지 않는 유저입니다."));}
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(()->
+            new RuntimeException(email+" 없음"));
+    }
 
-    public User updateUser(String email, User user){
-        User existing=findByEmail(email);
+    public User findById (Long id){
+        return userRepository.findById(id).orElseThrow(()->
+                new UserNotFoundException(id));
+    }
+
+    public User updateUser(Long id, User user){
+        User existing=findById(id);
         if (user.getEmail()!=null){
             existing.setEmail(user.getEmail());
         }
@@ -61,11 +68,11 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(String email){
-        if (userRepository.existsByEmail(email)){
-            userRepository.deleteByEmail(email);
+    public void delete(Long id){
+        if (userRepository.existsById(id)){
+            userRepository.deleteById(id);
         }else{
-            throw new UserNotFoundException(email);
+            throw new UserNotFoundException(id);
         }
     }
 

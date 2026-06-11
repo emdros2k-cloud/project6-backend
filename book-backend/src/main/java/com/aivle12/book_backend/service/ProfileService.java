@@ -32,15 +32,22 @@ public class ProfileService {
 
     public Profile searchByEmail(String email){
         return profileRepository.findByEmail(email).orElseThrow(()->
-                new IllegalArgumentException("존재하지 않는 프로필입니다."));
+                new RuntimeException(email+" 없음"));
     }
+
+    public Profile searchById(Long id){
+        return profileRepository.findById(id).orElseThrow(()->
+                new ProfileNotFoundException(id));
+
+    }
+
 
     public Profile create(Profile profile){
         return profileRepository.save(profile);
     }
 
-    public Profile update(String email, Profile profile){
-        Profile existing=searchByEmail(email);
+    public Profile update(Long id, Profile profile){
+        Profile existing=searchById(id);
 
         if(profile.getBio()!=null){
             existing.setBio(profile.getBio());
@@ -52,11 +59,11 @@ public class ProfileService {
         return profileRepository.save(existing);
     }
 
-    public void delete(String email){
-        if (profileRepository.existsByEmail(email)){
-            profileRepository.deleteByEmail(email);
+    public void delete(Long id){
+        if (profileRepository.existsById(id)){
+            profileRepository.deleteById(id);
         }else{
-            throw new ProfileNotFoundException(email);
+            throw new ProfileNotFoundException(id);
         }
     }
 
