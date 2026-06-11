@@ -220,42 +220,30 @@ src/main/resources/
 
 <br>
 
-## 🧪 테스트
-
-### Postman 테스트
-<!-- Postman 테스트 캡처 이미지를 아래에 첨부하세요 -->
-
-| 테스트 항목 | 결과 |
-|-------------|------|
-| GET /books | |
-| GET /books/{id} | |
-| POST /books | |
-| PATCH /books/{id} | |
-| DELETE /books/{id} | |
-
-### 풀스택 동작 확인
-<!-- React 화면 + Postman 연동 확인 캡처를 첨부하세요 -->
-
-<br>
-
 ## ⚙️ 설치 및 실행 방법
 
 ### 사전 요구사항
 
-- Java
-- (기타 필요한 환경)
-
-### 실행 순서
+- Java 17+
+- Node.js / npm
+- MySQL
+### Backend 실행
 
 ```bash
 # 1. 저장소 클론
-git clone 
-
+$ git clone https://github.com/aivleschool-miniproject12/BackEnd.git
+ 
 # 2. 디렉토리 이동
-cd 
+$ cd BackEnd
 
-# 3. 백엔드 실행
-./gradlew bootRun
+IntelliJ에서 `BookappApplication.java` 실행
+```
+
+### Frontend
+```bash
+$ git clone https://github.com/aivleschool-miniproject12/Frontend.git
+$ npm install
+$ npm run dev
 ```
 
 <br>
