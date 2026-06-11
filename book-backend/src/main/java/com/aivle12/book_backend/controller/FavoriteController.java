@@ -1,12 +1,11 @@
 package com.aivle12.book_backend.controller;
 
-import com.aivle12.book_backend.dto.FavoriteRequest;
 import com.aivle12.book_backend.dto.FavoriteResponse;
 import com.aivle12.book_backend.service.FavoriteService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +17,14 @@ public class FavoriteController {
 
     @PostMapping("/{bookId}/favorites")
     public ResponseEntity<FavoriteResponse> addFavorite(@PathVariable Long bookId,
-                                                        @Valid @RequestBody FavoriteRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(favoriteService.addFavorite(bookId, request));
+                                                        @AuthenticationPrincipal Long userId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(favoriteService.addFavorite(bookId, userId));
     }
 
     @DeleteMapping("/{bookId}/favorites")
     public ResponseEntity<Void> removeFavorite(@PathVariable Long bookId,
-                                               @Valid @RequestBody FavoriteRequest request) {
-        favoriteService.removeFavorite(bookId, request);
+                                               @AuthenticationPrincipal Long userId) {
+        favoriteService.removeFavorite(bookId, userId);
         return ResponseEntity.noContent().build();
     }
 }

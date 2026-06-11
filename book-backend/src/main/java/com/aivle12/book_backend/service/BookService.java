@@ -8,8 +8,10 @@ import com.aivle12.book_backend.dto.BookUpdateRequest;
 import com.aivle12.book_backend.exception.BookNotFoundException;
 import com.aivle12.book_backend.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,9 +35,9 @@ public class BookService {
         return BookResponse.from(findById(id));
     }
 
-    public BookResponse createBook(BookCreateRequest request) {
+    public BookResponse createBook(BookCreateRequest request, Long userId) {
         Book book = new Book();
-        book.setAuthorId(request.getAuthorId());
+        book.setAuthorId(userId);
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
         book.setContent(request.getContent());
@@ -49,8 +51,11 @@ public class BookService {
         return BookResponse.from(bookRepository.save(book));
     }
 
-    public BookResponse updateBook(Long id, BookUpdateRequest request) {
+    public BookResponse updateBook(Long id, BookUpdateRequest request, Long userId) {
         Book book = findById(id);
+        if (!book.getAuthorId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "도서를 수정할 권한이 없습니다.");
+        }
         if (request.getTitle() != null) book.setTitle(request.getTitle());
         if (request.getAuthor() != null) book.setAuthor(request.getAuthor());
         if (request.getContent() != null) book.setContent(request.getContent());
@@ -64,8 +69,11 @@ public class BookService {
         return BookResponse.from(book);
     }
 
-    public void deleteBook(Long id) {
-        findById(id);
+    public void deleteBook(Long id, Long userId) {
+        Book book = findById(id);
+        if (!book.getAuthorId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "도서를 삭제할 권한이 없습니다.");
+        }
         bookRepository.deleteById(id);
     }
 

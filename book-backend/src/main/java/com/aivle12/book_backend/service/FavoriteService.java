@@ -1,7 +1,6 @@
 package com.aivle12.book_backend.service;
 
 import com.aivle12.book_backend.domain.Favorite;
-import com.aivle12.book_backend.dto.FavoriteRequest;
 import com.aivle12.book_backend.dto.FavoriteResponse;
 import com.aivle12.book_backend.exception.BookNotFoundException;
 import com.aivle12.book_backend.exception.FavoriteAlreadyExistsException;
@@ -20,27 +19,26 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final BookRepository bookRepository;
 
-    public FavoriteResponse addFavorite(Long bookId, FavoriteRequest request) {
+    public FavoriteResponse addFavorite(Long bookId, Long userId) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundException(bookId);
         }
-        if (favoriteRepository.existsByUserIdAndBookId(request.getUserId(), bookId)) {
-            throw new FavoriteAlreadyExistsException(request.getUserId(), bookId);
+        if (favoriteRepository.existsByUserIdAndBookId(userId, bookId)) {
+            throw new FavoriteAlreadyExistsException(userId, bookId);
         }
-
         Favorite favorite = new Favorite();
-        favorite.setUserId(request.getUserId());
+        favorite.setUserId(userId);
         favorite.setBookId(bookId);
         return FavoriteResponse.from(favoriteRepository.save(favorite));
     }
 
-    public void removeFavorite(Long bookId, FavoriteRequest request) {
+    public void removeFavorite(Long bookId, Long userId) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundException(bookId);
         }
-        if (!favoriteRepository.existsByUserIdAndBookId(request.getUserId(), bookId)) {
-            throw new FavoriteNotFoundException(request.getUserId(), bookId);
+        if (!favoriteRepository.existsByUserIdAndBookId(userId, bookId)) {
+            throw new FavoriteNotFoundException(userId, bookId);
         }
-        favoriteRepository.deleteByUserIdAndBookId(request.getUserId(), bookId);
+        favoriteRepository.deleteByUserIdAndBookId(userId, bookId);
     }
 }
