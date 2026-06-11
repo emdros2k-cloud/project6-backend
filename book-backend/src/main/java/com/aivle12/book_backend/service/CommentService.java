@@ -27,6 +27,9 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getComments(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
         return commentRepository.findByBookId(bookId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());

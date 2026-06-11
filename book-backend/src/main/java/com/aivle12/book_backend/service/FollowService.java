@@ -66,7 +66,7 @@ public class FollowService {
         FollowResponseDto dto = new FollowResponseDto();
         dto.setId(follow.getId());
         dto.setFollowerId(follow.getFollowerId());
-        dto.setFolloweeId(follow.getFollowingId());
+        dto.setFollowingId(follow.getFollowingId());
         dto.setCreatedAt(follow.getCreatedAt());
         return dto;
     }
