@@ -27,8 +27,14 @@ public class BookResponse {
     private String isbn;
 
     private LocalDate pubDate;
+    private Double averageRating;
+    private Long ratingCount;
 
     public static BookResponse from(Book book) {
+        return from(book, null, 0L);
+    }
+
+    public static BookResponse from(Book book, Double averageRating, Long ratingCount) {
         return BookResponse.builder()
                 .id(book.getId())
                 .authorId(book.getAuthorId())
@@ -45,6 +51,8 @@ public class BookResponse {
                 .viewCount(book.getViewCount())
                 .isbn(book.getIsbn())
                 .pubDate(book.getPubDate())
+                .averageRating(averageRating)
+                .ratingCount(ratingCount)
                 .build();
     }
 }

@@ -7,6 +7,7 @@ import com.aivle12.book_backend.dto.BookResponse;
 import com.aivle12.book_backend.dto.BookUpdateRequest;
 import com.aivle12.book_backend.exception.BookNotFoundException;
 import com.aivle12.book_backend.repository.BookRepository;
+import com.aivle12.book_backend.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,18 +23,19 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
     public List<BookResponse> getBooks(Long authorId) {
         List<Book> books = (authorId != null)
                 ? bookRepository.findByAuthorId(authorId)
                 : bookRepository.findAll();
-        return books.stream().map(BookResponse::from).collect(Collectors.toList());
+        return books.stream().map(this::toResponseWithRating).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public BookResponse getBook(Long id) {
-        return BookResponse.from(findById(id));
+        return toResponseWithRating(findById(id));
     }
 
     public BookResponse createBook(BookCreateRequest request, Long userId) {
@@ -88,6 +90,13 @@ public class BookService {
         Book book = findById(id);
         book.setCoverImageUrl(request.getCoverImageUrl());
         return BookResponse.from(book);
+    }
+
+    private BookResponse toResponseWithRating(Book book) {
+        Double avg = commentRepository.averageRatingByBookId(book.getId());
+        Double averageRating = (avg != null) ? Math.round(avg * 10.0) / 10.0 : null;
+        long ratingCount = commentRepository.countByBookId(book.getId());
+        return BookResponse.from(book, averageRating, ratingCount);
     }
 
     private Book findById(Long id) {
