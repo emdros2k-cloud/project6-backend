@@ -35,6 +35,9 @@ public class FavoriteService {
     }
 
     public void removeFavorite(Long bookId, FavoriteRequest request) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
         if (!favoriteRepository.existsByUserIdAndBookId(request.getUserId(), bookId)) {
             throw new FavoriteNotFoundException(request.getUserId(), bookId);
         }

@@ -36,14 +36,17 @@ public class CommentController {
     @PatchMapping("/comments/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long id,
-            @RequestBody @Valid CommentRequestDto dto) {
-        return ResponseEntity.ok(commentService.updateComment(id, dto));
+            @RequestBody @Valid CommentRequestDto dto,
+            @AuthenticationPrincipal Long userId) {
+        return ResponseEntity.ok(commentService.updateComment(id, dto, userId));
     }
 
     // DELETE /comments/{id}
     @DeleteMapping("/comments/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
-        commentService.deleteComment(id);
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Long userId) {
+        commentService.deleteComment(id, userId);
         return ResponseEntity.noContent().build();
     }
 }

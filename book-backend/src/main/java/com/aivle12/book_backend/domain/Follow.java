@@ -19,7 +19,7 @@ public class Follow {
     private Long followerId;
 
     @Column(nullable = false)
-    private Long followingId;  // followeeId → followingId 로 변경!
+    private Long followingId;
 
     private LocalDateTime createdAt;
 }

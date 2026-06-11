@@ -11,6 +11,6 @@ public class FollowResponseDto {
 
     private Long id;
     private Long followerId;
-    private Long followeeId;
+    private Long followingId;
     private LocalDateTime createdAt;
 }
