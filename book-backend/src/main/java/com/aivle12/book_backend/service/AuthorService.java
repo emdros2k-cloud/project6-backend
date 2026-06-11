@@ -2,7 +2,6 @@ package com.aivle12.book_backend.service;
 
 import com.aivle12.book_backend.domain.User;
 import com.aivle12.book_backend.exception.UserNotFoundException;
-import com.aivle12.book_backend.repository.ProfileRepository;
 import com.aivle12.book_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import java.util.List;
 
 public class AuthorService {
     private final UserRepository userRepository;
-    private final ProfileRepository profileRepository;
     /*
     private final CommetRepository commentRepository;
     private final BookRepository bookRepository;

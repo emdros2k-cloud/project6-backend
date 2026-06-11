@@ -31,7 +31,7 @@ public class ProfileService {
      */
 
     public Profile searchByEmail(String email){
-        return profileRepository.findByEmail(email).orElseThrow(()->
+        return profileRepository.findByUserEmail(email).orElseThrow(()->
                 new RuntimeException(email+" 없음"));
     }
 
