@@ -102,7 +102,8 @@ graph LR
 
 ## 🗂 ERD
 
-<!-- ERD 이미지를 첨부하거나 아래 필드 목록을 채워주세요 -->
+<!-- ERD 이미지를 아래에 첨부하세요 -->
+<!-- ![ERD](./docs/erd.png) -->
 
 ```
 USERS
@@ -112,11 +113,11 @@ USERS
 - nickname (UK)         닉네임                  @NotNull @Unique
 - created_at                                    @PrePersist 자동 설정
  
-PROFILE
-- user_id (PK, FK)  유저 고유번호 (1:1)
-- bio               한줄 소개 / 프로필 정보
-- avatar_url        프로필 이미지 URL
-- updated_at
+PROFILES
+- id (PK, FK)           유저 고유번호 (1:1)      @MapsId
+- bio                   자기소개                 @NotNull
+- avatar                아바타 이미지 주소        @NotNull
+- created_at                                    @PrePersist 자동 설정
  
 BOOK
 - id (PK)               도서 고유번호
@@ -135,12 +136,6 @@ BOOK
 - created_at                                    @PrePersist 자동 설정
 - updated_at                                    @PreUpdate 자동 갱신
  
-FOLLOW
-- id (PK)           팔로우 고유번호
-- follower_id (FK)  팔로우한 유저 ID
-- author_id (FK)    팔로우 대상 작가 ID
-- created_at
- 
 FAVORITE
 - id (PK)               즐겨찾기 고유번호
 - user_id (FK)          유저 고유번호            @NotNull
@@ -148,17 +143,21 @@ FAVORITE
 - created_at                                    @PrePersist 자동 설정
 * UNIQUE (user_id, book_id)
  
+FOLLOW
+- id (PK)               팔로우 고유번호
+- follower_id           팔로우 하는 유저 ID      @NotNull
+- following_id          팔로우 대상 유저 ID      @NotNull
+- created_at
+ 
 COMMENT
-- id (PK)           댓글 및 별점 고유번호
-- book_id (FK)      도서 고유번호
-- user_id (FK)      유저 고유번호
-- content           댓글/리뷰 내용
-- rating            별점 점수 (1~5점)
+- id (PK)               댓글 고유번호
+- book_id               도서 고유번호            @NotNull
+- user_id               유저 고유번호            @NotNull
+- content               댓글 내용               @NotNull
+- rating                별점 (1~5)              @NotNull
 - created_at
 - updated_at
 ```
-
-<!-- ![ERD](./docs/erd.png) -->
 
 <br>
 
@@ -227,6 +226,24 @@ src/main/resources/
 - Java 17+
 - Node.js / npm
 - MySQL
+
+### 환경 변수 설정
+
+**Backend** — 프로젝트 루트에 `.env` 파일 생성:
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=book_db
+DB_USERNAME=root
+DB_PASSWORD=
+OPENAI_API_KEY=
+```
+
+**Frontend** — 프론트엔드 루트에 `.env` 파일 생성:
+```
+VITE_API_BASE_URL=http://localhost:8080
+```
+
 ### Backend 실행
 
 ```bash
@@ -239,7 +256,8 @@ $ cd BackEnd
 IntelliJ에서 `BookappApplication.java` 실행
 ```
 
-### Frontend
+### Frontend 실행
+
 ```bash
 $ git clone https://github.com/aivleschool-miniproject12/Frontend.git
 $ npm install
