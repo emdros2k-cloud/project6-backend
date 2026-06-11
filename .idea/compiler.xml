@@ -11,12 +11,16 @@
         <module name="com.aivle12.book-backend.test" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="com.aivle12.book-backend.main~2" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="com.aivle12.book-backend" options="-parameters" />
       <module name="com.aivle12.book-backend.main" options="-parameters" />
       <module name="com.aivle12.book-backend.main~1" options="-parameters" />
+      <module name="com.aivle12.book-backend.main~2" options="-parameters" />
       <module name="com.aivle12.book-backend.test" options="-parameters" />
     </option>
   </component>

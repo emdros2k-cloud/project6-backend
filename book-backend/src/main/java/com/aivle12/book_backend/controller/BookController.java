@@ -36,7 +36,7 @@ public class BookController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<BookResponse> updateBook(@PathVariable Long id,
-                                                   @RequestBody BookUpdateRequest request) {
+                                                   @Valid @RequestBody BookUpdateRequest request) {
         return ResponseEntity.ok(bookService.updateBook(id, request));
     }
 
@@ -66,5 +66,11 @@ public class BookController {
     @PostMapping("/cover/generate")
     public ResponseEntity<BookCoverGenerateResponse> generateCover(@Valid @RequestBody BookCoverGenerateRequest request) {
         return ResponseEntity.ok(aiCoverService.generateCovers(request));
+    }
+
+    @PostMapping("/{id}/cover/generate")
+    public ResponseEntity<BookCoverGenerateResponse> generateCoverForBook(@PathVariable Long id,
+                                                                          @Valid @RequestBody BookCoverGenerateRequest request) {
+        return ResponseEntity.ok(aiCoverService.generateCoversForBook(id, request));
     }
 }
