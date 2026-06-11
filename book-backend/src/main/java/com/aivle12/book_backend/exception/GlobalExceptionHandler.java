@@ -87,6 +87,18 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", message));
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String,String>> handleUserNotFound(UserNotFoundException e){
+        Map<String,String> body=Map.of("message",e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<Map<String,String>> handleProfileNotFound(ProfileNotFoundException e){
+        Map<String,String> body=Map.of("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneral(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
