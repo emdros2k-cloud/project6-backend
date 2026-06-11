@@ -1,6 +1,7 @@
 package com.aivle12.book_backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class BookCoverGenerateRequest {
 
     @NotBlank
+    @Pattern(regexp = "dall-e-3|gpt-image-1|gpt-image-2", message = "지원하지 않는 모델입니다.")
     private String model;       // gpt-image-2, gpt-image-1, dall-e-3
 
     private String quality;     // Low, Medium, High

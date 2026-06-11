@@ -9,12 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -43,11 +46,7 @@ public class AiCoverService {
                 ))
                 .collect(Collectors.toList());
 
-        List<String> images = futures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-
-        return new BookCoverGenerateResponse(images);
+        return new BookCoverGenerateResponse(collectImages(futures));
     }
 
     @SuppressWarnings("unchecked")
@@ -68,16 +67,45 @@ public class AiCoverService {
             body.put("output_format", "png");
         }
 
-        ResponseEntity<Map> response = restTemplate.exchange(
-                OPENAI_URL,
-                HttpMethod.POST,
-                new HttpEntity<>(body, headers),
-                Map.class
-        );
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    OPENAI_URL,
+                    HttpMethod.POST,
+                    new HttpEntity<>(body, headers),
+                    Map.class
+            );
 
-        List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
-        String b64 = (String) data.get(0).get("b64_json");
-        return "data:image/png;base64," + b64;
+            if (response.getBody() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "OpenAI 응답이 비어 있습니다.");
+            }
+            List<Map<String, Object>> data = (List<Map<String, Object>>) response.getBody().get("data");
+            if (data == null || data.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "OpenAI 응답이 올바르지 않습니다.");
+            }
+            String b64 = (String) data.get(0).get("b64_json");
+            if (b64 == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "OpenAI 응답에서 이미지를 찾을 수 없습니다.");
+            }
+            return "data:image/png;base64," + b64;
+        } catch (RestClientException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "이미지 생성 중 오류가 발생했습니다.");
+        }
+    }
+
+    private List<String> collectImages(List<CompletableFuture<String>> futures) {
+        return futures.stream()
+                .map(f -> {
+                    try {
+                        return f.join();
+                    } catch (CompletionException e) {
+                        Throwable cause = e.getCause();
+                        if (cause instanceof ResponseStatusException rse) {
+                            throw rse;
+                        }
+                        throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "이미지 생성 중 오류가 발생했습니다.");
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public BookCoverGenerateResponse generateCoversForBook(Long bookId, BookCoverGenerateRequest request) {
@@ -95,11 +123,7 @@ public class AiCoverService {
                 ))
                 .collect(Collectors.toList());
 
-        List<String> images = futures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-
-        return new BookCoverGenerateResponse(images);
+        return new BookCoverGenerateResponse(collectImages(futures));
     }
 
     private String buildPrompt(BookCoverGenerateRequest request) {
