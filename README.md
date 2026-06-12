@@ -257,6 +257,10 @@ OPENAI_API_KEY=
 VITE_API_BASE_URL=http://localhost:8080
 ```
 
+### MySQL
+MySQL 서버를 먼저 실행한 후 `book_db` 데이터베이스를 생성하세요.
+> `CREATE DATABASE book_db;`
+
 ### Backend 실행
 
 ```bash
@@ -266,7 +270,7 @@ $ git clone https://github.com/aivleschool-miniproject12/BackEnd.git
 # 2. 디렉토리 이동
 $ cd BackEnd
 
-IntelliJ에서 `BookappApplication.java` 실행
+IntelliJ에서 `BookBackendApplication.java` 실행
 ```
 
 ### Frontend 실행
