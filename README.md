@@ -163,6 +163,28 @@ COMMENT
 
 ## 📂 프로젝트 구조
 
+### Frontend
+
+```text
+Frontend/ (저장소: https://github.com/aivleschool-miniproject12/Frontend)
+├── public/             # 정적 파일 (파비콘, 아이콘 등)
+├── src/
+│   ├── assets/         # 이미지 및 UI 에셋
+│   ├── components/     # 기능 및 페이지별 UI 컴포넌트
+│   │   ├── common/     # 공통 컴포넌트 (Header)
+│   │   ├── detail/     # 도서 상세 정보 영역
+│   │   ├── edit/       # 도서 및 AI 표지 에디터 영역
+│   │   ├── list/       # 도서 목록 렌더링 및 사이드바 영역
+│   │   └── main/       # 메인 화면 및 검색바 영역
+│   ├── pages/          # 라우팅되는 최상위 페이지 (Home, BookList 등)
+│   ├── util/           # 공통 유틸리티 (bookCoverService)
+│   ├── App.jsx         # 메인 라우터 및 상태 관리
+│   └── main.jsx        # React 진입점
+└── .env                # 환경 변수 (VITE_API_BASE_URL, VITE_OPENAI_API_KEY)
+```
+
+### Backend
+
 ```
 book-backend/src/main/java/com/aivle12/book_backend/
 ├── domain/
@@ -229,6 +251,9 @@ src/main/resources/
 | 🤝 팔로우 / 언팔로우        | - 사용자 간 팔로우 및 언팔로우 기능 제공 <br> - 팔로워·팔로잉 목록을 통해 사용자 간 연결 관계 확인 가능            |
 | ⭐ 댓글 기반 평점           | - 도서별 댓글 작성과 함께 평점 등록 기능 제공 <br> - 사용자 리뷰를 기반으로 도서 평가와 피드백 확인 가능            |
 | 🔎 상세 검색             | - 제목, 작가 외에도 출판사, 가격, 리뷰 평점, 출판연도 별로 필터링해서 검색 가능                            |
+| 🎨 AI 표지 생성          | - 스타일·배경·타이포그래피 태그 선택 및 프롬프트 입력으로 원하는 분위기의 표지 생성 <br> - 1회 생성에 최대 3가지 샘플 제공, 등록 후에도 언제든 수정 가능 |
+| ✅ 카테고리 필터링          | - 도서 목록 화면에서 장르별 필터링 제공 (상세 검색 없이 간편하게 탐색 가능)                               |
+| 🏆 도서 랭킹             | - 메인 화면에서 조회수 기준 인기 도서 랭킹 및 출판일 기준 신작 랭킹 제공                                 |
 
 <br>
 
@@ -293,6 +318,12 @@ $ npm run dev
 | 작가 프로필   | <img width="1248" height="950" alt="Image" src="https://github.com/user-attachments/assets/6e6684f3-4147-40f6-8500-3f03d5436407" />     |
 | 댓글·리뷰 등록 | <img width="1242" height="1386" alt="Image" src="https://github.com/user-attachments/assets/5860a864-b555-465e-ab03-9c77b80ba548" />     |
 | 팔로우 신청   | <img width="1249" height="924" alt="Image" src="https://github.com/user-attachments/assets/ca4a1aac-6ceb-481e-9137-936b1aad965f" />     |
+| 메인 화면 (랭킹) | <img src="https://github.com/user-attachments/assets/1a76f89e-b3c5-41f8-ae42-61477d71240d" /> |
+| 도서 목록 (카테고리 필터) | <img width="1895" height="908" src="https://github.com/user-attachments/assets/b334a398-0247-411b-9d68-c69d7ff44bc5" /> |
+| 신규 도서 등록 | <img src="https://github.com/user-attachments/assets/7ed3444e-996e-4ec5-8382-4563cf8dcd52" /> |
+| AI 표지 생성  | <img src="https://github.com/user-attachments/assets/0ee21aeb-7347-4635-9ddb-c01a070ca8ca" /> |
+| 도서 상세 정보 | <img src="https://github.com/user-attachments/assets/cdb48da5-fde7-403f-b94d-5a024bb54017" /> |
+| AI 표지 수정  | <img src="https://github.com/user-attachments/assets/96d6a1dd-b497-4d69-b95d-184b4b1c12a2" /> |
 
 <br>
 
