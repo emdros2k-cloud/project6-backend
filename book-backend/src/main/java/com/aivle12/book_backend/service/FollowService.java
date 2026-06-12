@@ -1,7 +1,7 @@
 package com.aivle12.book_backend.service;
 
 import com.aivle12.book_backend.domain.Follow;
-import com.aivle12.book_backend.dto.FollowResponseDto;
+import com.aivle12.book_backend.dto.FollowResponse;
 import com.aivle12.book_backend.dto.FollowStatusResponse;
 import com.aivle12.book_backend.exception.FollowAlreadyExistsException;
 import com.aivle12.book_backend.exception.FollowNotFoundException;
@@ -25,7 +25,7 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    public FollowResponseDto follow(Long followingId, Long userId) {
+    public FollowResponse follow(Long followingId, Long userId) {
         if (userId.equals(followingId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다.");
         }
@@ -50,14 +50,14 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public List<FollowResponseDto> getFollowings(Long userId) {
+    public List<FollowResponse> getFollowings(Long userId) {
         return followRepository.findByFollowerId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<FollowResponseDto> getFollowers(Long userId) {
+    public List<FollowResponse> getFollowers(Long userId) {
         return followRepository.findByFollowingId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -69,8 +69,8 @@ public class FollowService {
         return new FollowStatusResponse(following);
     }
 
-    private FollowResponseDto toDto(Follow follow) {
-        FollowResponseDto dto = new FollowResponseDto();
+    private FollowResponse toDto(Follow follow) {
+        FollowResponse dto = new FollowResponse();
         dto.setId(follow.getId());
         dto.setFollowerId(follow.getFollowerId());
         dto.setFollowingId(follow.getFollowingId());

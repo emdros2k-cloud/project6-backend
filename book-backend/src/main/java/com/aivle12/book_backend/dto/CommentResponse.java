@@ -7,10 +7,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class FollowResponseDto {
+public class CommentResponse {
 
     private Long id;
-    private Long followerId;
-    private Long followingId;
+    private Long bookId;
+    private Long userId;
+    private String content;
+    private Integer rating;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

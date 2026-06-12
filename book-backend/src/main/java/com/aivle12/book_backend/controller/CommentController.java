@@ -1,7 +1,7 @@
 package com.aivle12.book_backend.controller;
 
-import com.aivle12.book_backend.dto.CommentRequestDto;
-import com.aivle12.book_backend.dto.CommentResponseDto;
+import com.aivle12.book_backend.dto.CommentRequest;
+import com.aivle12.book_backend.dto.CommentResponse;
 import com.aivle12.book_backend.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,24 +19,24 @@ public class CommentController {
 
     // GET /books/{bookId}/comments
     @GetMapping("/books/{bookId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long bookId) {
+    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long bookId) {
         return ResponseEntity.ok(commentService.getComments(bookId));
     }
 
     // POST /books/{bookId}/comments
     @PostMapping("/books/{bookId}/comments")
-    public ResponseEntity<CommentResponseDto> createComment(
+    public ResponseEntity<CommentResponse> createComment(
             @PathVariable Long bookId,
-            @RequestBody @Valid CommentRequestDto dto,
+            @RequestBody @Valid CommentRequest dto,
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.status(201).body(commentService.createComment(bookId, dto, userId));
     }
 
     // PATCH /comments/{id}
     @PatchMapping("/comments/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(
+    public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long id,
-            @RequestBody @Valid CommentRequestDto dto,
+            @RequestBody @Valid CommentRequest dto,
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(commentService.updateComment(id, dto, userId));
     }

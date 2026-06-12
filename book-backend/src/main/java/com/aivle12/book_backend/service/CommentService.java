@@ -1,8 +1,8 @@
 package com.aivle12.book_backend.service;
 
 import com.aivle12.book_backend.domain.Comment;
-import com.aivle12.book_backend.dto.CommentRequestDto;
-import com.aivle12.book_backend.dto.CommentResponseDto;
+import com.aivle12.book_backend.dto.CommentRequest;
+import com.aivle12.book_backend.dto.CommentResponse;
 import com.aivle12.book_backend.exception.BookNotFoundException;
 import com.aivle12.book_backend.exception.CommentNotFoundException;
 import com.aivle12.book_backend.repository.BookRepository;
@@ -26,7 +26,7 @@ public class CommentService {
     private final BookRepository bookRepository;
 
     @Transactional(readOnly = true)
-    public List<CommentResponseDto> getComments(Long bookId) {
+    public List<CommentResponse> getComments(Long bookId) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundException(bookId);
         }
@@ -35,7 +35,7 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public CommentResponseDto createComment(Long bookId, CommentRequestDto dto, Long userId) {
+    public CommentResponse createComment(Long bookId, CommentRequest dto, Long userId) {
         if (!bookRepository.existsById(bookId)) {
             throw new BookNotFoundException(bookId);
         }
@@ -49,7 +49,7 @@ public class CommentService {
         return toDto(commentRepository.save(comment));
     }
 
-    public CommentResponseDto updateComment(Long id, CommentRequestDto dto, Long userId) {
+    public CommentResponse updateComment(Long id, CommentRequest dto, Long userId) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(id));
         if (!comment.getUserId().equals(userId)) {
@@ -70,8 +70,8 @@ public class CommentService {
         commentRepository.deleteById(id);
     }
 
-    private CommentResponseDto toDto(Comment comment) {
-        CommentResponseDto dto = new CommentResponseDto();
+    private CommentResponse toDto(Comment comment) {
+        CommentResponse dto = new CommentResponse();
         dto.setId(comment.getId());
         dto.setBookId(comment.getBookId());
         dto.setUserId(comment.getUserId());

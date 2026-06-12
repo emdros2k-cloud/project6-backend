@@ -1,6 +1,6 @@
 package com.aivle12.book_backend.controller;
 
-import com.aivle12.book_backend.dto.FollowResponseDto;
+import com.aivle12.book_backend.dto.FollowResponse;
 import com.aivle12.book_backend.dto.FollowStatusResponse;
 import com.aivle12.book_backend.service.FollowService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class FollowController {
 
     // POST /authors/{id}/follows
     @PostMapping("/authors/{id}/follows")
-    public ResponseEntity<FollowResponseDto> follow(
+    public ResponseEntity<FollowResponse> follow(
             @PathVariable Long id,
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.status(201).body(followService.follow(id, userId));
@@ -43,14 +43,14 @@ public class FollowController {
 
     // GET /users/followings
     @GetMapping("/users/followings")
-    public ResponseEntity<List<FollowResponseDto>> getFollowings(
+    public ResponseEntity<List<FollowResponse>> getFollowings(
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(followService.getFollowings(userId));
     }
 
     // GET /users/followers
     @GetMapping("/users/followers")
-    public ResponseEntity<List<FollowResponseDto>> getFollowers(
+    public ResponseEntity<List<FollowResponse>> getFollowers(
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(followService.getFollowers(userId));
     }
