@@ -166,37 +166,50 @@ COMMENT
 ```
 book-backend/src/main/java/com/aivle12/book_backend/
 ├── domain/
-│   ├── Book.java                  # 도서 Entity (@PrePersist/@PreUpdate 자동 시간 설정, 조회수)
-│   ├── Comment.java                # 댓글 Entity (bookId, userId, rating)
-│   ├── Favorite.java               # 즐겨찾기 Entity (UNIQUE: user_id + book_id)
-│   ├── Follow.java                 # 팔로우 Entity (followerId, followingId)
-│   └── User.java                   # 회원 Entity (email, nickname Unique)
-├── dto/                             # 요청/응답 DTO (Entity 직접 노출 방지)
-├── repository/                      # JpaRepository 상속, 도메인별 CRUD/조회 메서드
+│   ├── Book.java                   # 도서 Entity (@PrePersist/@PreUpdate 자동 시간 설정, 조회수)
+│   ├── Comment.java                 # 댓글 Entity (bookId, userId, rating)
+│   ├── Favorite.java                # 즐겨찾기 Entity (UNIQUE: user_id + book_id)
+│   ├── Follow.java                  # 팔로우 Entity (followerId, followingId)
+│   ├── Profile.java                 # 프로필 Entity (User와 1:1, bio/avatar/createdAt)
+│   └── User.java                    # 회원 Entity (email, nickname Unique)
+├── dto/                              # 요청/응답 DTO (Entity 직접 노출 방지, XxxDto → Xxx 네이밍 통일)
+├── repository/                       # JpaRepository 상속, 도메인별 CRUD/조회 메서드
+│   ├── BookRepository.java          # findByAuthorId (작가별 도서 목록 필터링)
+│   ├── CommentRepository.java       # averageRatingByBookId, countByBookId (평점 집계)
+│   ├── FavoriteRepository.java
+│   ├── FollowRepository.java
+│   ├── ProfileRepository.java       # findByUserEmail 등 User 이메일 기반 조회
+│   └── UserRepository.java
 ├── service/
-│   ├── AuthService.java            # 회원가입/로그인/내정보, 비밀번호 암호화·JWT 발급
-│   ├── BookService.java            # 도서 CRUD, 조회수 증가, 표지 변경 (@Transactional)
-│   ├── AiCoverService.java         # OpenAI 이미지 생성 API 호출, 표지 3장 생성
-│   ├── CommentService.java         # 댓글 CRUD
-│   ├── FavoriteService.java        # 즐겨찾기 등록/삭제
-│   └── FollowService.java          # 팔로우/언팔로우, 팔로잉·팔로워 목록 조회
+│   ├── AuthService.java             # 회원가입/로그인/내정보, 비밀번호 암호화·JWT 발급
+│   ├── AuthorService.java           # 회원(User) CRUD - 작가 정보 관리
+│   ├── BookService.java             # 도서 CRUD, 조회수 증가, 표지 변경, 평점/평점수 포함 응답, 작성자 권한 검증 (@Transactional)
+│   ├── AiCoverService.java          # OpenAI 이미지 생성 API 호출, 표지 3장 생성
+│   ├── CommentService.java          # 댓글 CRUD
+│   ├── FavoriteService.java         # 즐겨찾기 등록/삭제 (JWT userId 기반)
+│   ├── FollowService.java           # 팔로우/언팔로우, 팔로잉·팔로워 목록, 팔로우 여부 조회
+│   └── ProfileService.java          # 프로필 등록/조회/수정/삭제
 ├── controller/
-│   ├── UserController.java         # /users - 회원가입, 로그인, 내정보, 중복확인
-│   ├── BookController.java         # /books - CRUD, 조회수 증가, AI 표지 생성
-│   ├── CommentController.java      # /books/{bookId}/comments, /comments/{id}
-│   ├── FavoriteController.java     # /books/{bookId}/favorites
-│   └── FollowController.java       # /authors/{id}/follows, /users/followings|followers
+│   ├── UserController.java          # /users - 회원가입, 로그인, 내정보, ID로 사용자 조회, 이메일/닉네임 중복확인
+│   ├── AuthorController.java        # /users - 회원 목록/등록/수정/삭제
+│   ├── ProfileController.java       # /users/profile - 프로필 등록/조회/수정/삭제
+│   ├── BookController.java          # /books - CRUD(인증), 조회수 증가, authorId 필터링, AI 표지 생성/적용
+│   ├── CommentController.java       # /books/{bookId}/comments, /comments/{id}
+│   ├── FavoriteController.java      # /books/{bookId}/favorites (인증 필요)
+│   └── FollowController.java        # /authors/{id}/follows(+/status), /users/followings|followers
 ├── security/
-│   ├── JwtTokenProvider.java       # JWT 토큰 생성/검증/userId 추출
+│   ├── JwtTokenProvider.java        # JWT 토큰 생성/검증/userId 추출
 │   └── JwtAuthenticationFilter.java # 요청마다 JWT 검증 후 SecurityContext에 인증정보 설정
-├── exception/                       # 커스텀 예외 + GlobalExceptionHandler(전역 예외 처리)
+├── exception/                        # 커스텀 예외 + GlobalExceptionHandler(전역 예외 처리)
+│   └── ...NotFoundException / ...AlreadyExistsException (Book/Comment/Favorite/Follow/Profile/User)
 ├── config/
-│   ├── SecurityConfig.java         # Spring Security 설정 (JWT 필터, 인가 규칙, BCrypt)
-│   └── WebConfig.java              # CORS 설정 (프론트 localhost:5173 연동)
+│   ├── SecurityConfig.java          # Spring Security 설정 (JWT 필터, 인가 규칙, BCrypt)
+│   ├── WebConfig.java               # CORS 설정 (프론트 localhost:5173 연동)
+│   └── RestTemplateConfig.java      # AI 표지 생성용 RestTemplate Bean (connect/read timeout 설정)
 └── BookBackendApplication.java
 
 src/main/resources/
-└── application.yaml                # MySQL DB 연결, JPA, JWT, OpenAI API Key 설정
+└── application.yaml                 # MySQL DB 연결, JPA, JWT, OpenAI API Key 설정
 ```
 
 <br>
@@ -270,10 +283,17 @@ $ npm run dev
 
 | 페이지      | 미리보기 |
 |----------|------|
-| 회원가입     | https://github.com/user-attachments/assets/0687a2e2-e249-4037-b284-bc4b039d534a     |
-| 로그인      | https://github.com/user-attachments/assets/bcc3afc9-b468-4477-9e58-a0833ac777cf     |
-| 상세 검색 토글 | https://github.com/user-attachments/assets/8fe5320a-925a-4fec-bcf8-aaa80fca9385     |
-| 작가 프로필   | https://github.com/user-attachments/assets/f441bcd2-05dd-4aa9-b975-c649ef7e869d     |
-| 댓글·리뷰 등록 | https://github.com/user-attachments/assets/7df77735-470f-477b-ae92-9330ce57d1d8     |
-| 팔로우 신청   | https://github.com/user-attachments/assets/df19d51c-39c7-42b8-bca3-ea357cbd0da6     |
+| 회원가입     | <img width="1242" height="1363" alt="Image" src="https://github.com/user-attachments/assets/ddcc1972-fa6e-44da-8d88-717bdcaae22d" />     |
+| 로그인      | <img width="1247" height="1367" alt="Image" src="https://github.com/user-attachments/assets/fd36af37-62b3-4b84-8e02-ceb68c955082" />     |
+| 상세 검색 토글 | <img width="1235" height="635" alt="Image" src="https://github.com/user-attachments/assets/79a6e645-d86c-439a-aa89-d25154955675" />     |
+| 작가 프로필   | <img width="1248" height="950" alt="Image" src="https://github.com/user-attachments/assets/6e6684f3-4147-40f6-8500-3f03d5436407" />     |
+| 댓글·리뷰 등록 | <img width="1242" height="1386" alt="Image" src="https://github.com/user-attachments/assets/5860a864-b555-465e-ab03-9c77b80ba548" />     |
+| 팔로우 신청   | <img width="1249" height="924" alt="Image" src="https://github.com/user-attachments/assets/ca4a1aac-6ceb-481e-9137-936b1aad965f" />     |
 
+<br>
+
+## 🔧 트러블슈팅
+
+| 이슈 | 원인 | 해결 방법 |
+|------|------|-----------|
+| | | |
