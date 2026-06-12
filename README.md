@@ -275,12 +275,5 @@ $ npm run dev
 | 상세 검색 토글 | https://github.com/user-attachments/assets/8fe5320a-925a-4fec-bcf8-aaa80fca9385     |
 | 작가 프로필   | https://github.com/user-attachments/assets/f441bcd2-05dd-4aa9-b975-c649ef7e869d     |
 | 댓글·리뷰 등록 | https://github.com/user-attachments/assets/7df77735-470f-477b-ae92-9330ce57d1d8     |
-| 팔로우 신청   | https://github.com/user-attachments/assets/31d87aec-6ab0-4437-b0d3-41117d75b057     |
+| 팔로우 신청   | https://github.com/user-attachments/assets/df19d51c-39c7-42b8-bca3-ea357cbd0da6     |
 
-<br>
-
-## 🔧 트러블슈팅
-
-| 이슈 | 원인 | 해결 방법 |
-|------|------|-----------|
-| | | |
