@@ -296,4 +296,13 @@ $ npm run dev
 
 | 이슈 | 원인 | 해결 방법 |
 |------|------|-----------|
-| | | |
+| 수동 코드 리뷰 중 충돌 및 오류 발생 | 여러 브랜치 동시 작업 시 수동 리뷰로는 충돌 감지가 늦음 | GitHub에 CodeRabbit AI 코드 리뷰 도구 연동하여 PR마다 자동 리뷰 적용 |
+| 상세 검색에서 가격 표기법 전환 문제 | 가격 입력 자릿수 제한 없음 | `.slice(0, 9)` 로 9자리 입력 제한 적용 |
+| 별점 필터 미적용 문제 | 별점 값을 별도 계산하면서 필터에 반영되지 않음 | 별도 계산 없이 `book.averageRating` 을 직접 사용하도록 변경 |
+| 병합 과정에서 파일명 충돌 발생 | 기능별로 Controller·Service·Repository·Domain 을 각자 작성하면서 일부 파일명이 다른 팀원과 중복 | 기능 확인 후 중복된 파일명 변경 |
+| 유저 객체와 프로필 객체가 1:1 대응하지 못하는 문제 | Profile 객체의 id가 자동 생성되어 User 와 매핑되지 않음 | Profile id 자동 생성을 제거하고 User 에 1:1 대응(`@MapsId`)하도록 수정 |
+| `ProfileRepository.findByEmail()` 사용 시 애플리케이션 기동 실패 | Profile 엔티티에 `email` 필드가 없는데 파생 쿼리를 생성하려 해서 `BeanCreationException` 발생 | `findByEmail()` 을 `findByUserEmail()` 로 변경하여 연관 엔티티(User.email)를 통해 조회하도록 수정 |
+| develop 브랜치 병합 시 API 경로 충돌 | 다른 조원 코드와 동일한 `/users` 경로 사용 | 인증 기능은 `AuthController` 로 분리, 프로필 기능은 `UserController` 에서 담당하도록 변경 |
+| 댓글 작성자 표시 시 닉네임 대신 userId 노출 | `CommentResponse` DTO에 `nickname` 필드가 없어 userId만 반환 | `nickname` 필드 추가 및 `UserRepository` 를 통한 닉네임 조회 로직 구현 예정 |
+| 중복 파일 생성 및 오경로 파일 GitHub Push 오류 | 디렉토리 구조 혼선 | 전체 디렉토리 아키텍처 재정비 및 정확한 Git 명령어를 통한 파일 관리 정상화 |
+| 댓글 수정 요청 시 데이터 미반영 | 프론트엔드 API 엔드포인트와 백엔드 라우팅 경로 간 미스매치 | 엔드포인트 정합성 일치로 해결 |
