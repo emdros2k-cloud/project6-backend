@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/app # EC2 내부에 빌드 파일들이 다운로드될 경로
+hooks:
+  ApplicationStop:
+    - location: stop.sh # discard-paths: yes 설정 덕분에 scripts/ 폴더 구조 없이 루트에서 실행됩니다.
+      timeout: 60
+      runas: ubuntu
+  ApplicationStart:
+    - location: start.sh
+      timeout: 60
+      runas: ubuntu

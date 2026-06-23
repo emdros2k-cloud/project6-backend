@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17 # 본인의 Spring Boot 자바 버전에 맞게 설정 (11, 17, 21 등)
+  build:
+    commands:
+      - echo "==== 백엔드 Gradle 빌드 시작 ===="
+      - chmod +x ./gradlew
+      - ./gradlew clean build -x test # 빌드 속도를 위해 테스트는 제외 (필요시 제거)
+
+artifacts:
+  # CodeDeploy(EC2)로 넘겨줄 핵심 파일들만 쏙 골라서 패키징합니다.
+  files:
+    - build/libs/*.jar
+    - appspec.yml
+    - scripts/**/*
+  discard-paths: yes # 빌드 경로의 지저분한 폴더 구조를 깎아내고 파일만 깔끔하게 전달합니다.
