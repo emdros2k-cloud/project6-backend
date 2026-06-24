@@ -25,3 +25,6 @@ jwt:
 
 openai:
   api-key: ${OPENAI_API_KEY}
+
+cors:
+  allowed-origins: "*"
